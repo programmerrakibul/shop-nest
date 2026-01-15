@@ -4,6 +4,7 @@ const express = require("express");
 const cors = require("cors");
 const mongoose = require("mongoose");
 const authRouter = require("./routes/authRouter.js");
+const productRouter = require("./routes/productRouter.js");
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -27,6 +28,7 @@ const startServer = async () => {
     });
 
     app.use("/api/auth", authRouter);
+    app.use("/api/products", productRouter);
 
     // 404 handler
     app.use((req, res) => {
