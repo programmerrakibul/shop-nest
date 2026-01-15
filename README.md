@@ -18,6 +18,4 @@ processing, and Stripe payment integration with webhook handling.
 
 - Payment: Stripe API with webhooks
 
-- Deployment: Vercel/Render ready
-
 - Security: CORS, bcrypt
