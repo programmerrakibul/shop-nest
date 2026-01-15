@@ -81,4 +81,39 @@ const getAllProducts = async (req, res) => {
   }
 };
 
-module.exports = { createProduct, getAllProducts };
+const getProductById = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (!id || id.trim().length !== 24) {
+      return res.status(400).send({
+        success: false,
+        message: "Invalid product ID",
+      });
+    }
+
+    const product = await Product.findById(id);
+
+    if (!product) {
+      return res.status(404).send({
+        success: false,
+        message: "Product not found",
+      });
+    }
+    res.send({
+      success: true,
+      message: "Product retrieved successfully",
+      product,
+    });
+  } catch (error) {
+    console.error("Error retrieving product:", error);
+
+    res.status(500).send({
+      success: false,
+      message: "Error retrieving product",
+      error: error.message,
+    });
+  }
+};
+
+module.exports = { createProduct, getAllProducts, getProductById };
