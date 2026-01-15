@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const User = require("../models/User");
 
 const verifyToken = async (req, res, next) => {
   try {
@@ -14,10 +15,19 @@ const verifyToken = async (req, res, next) => {
       return res.status(401).send({ message: "Unauthorized access" });
     }
 
-    req.user = {
+    const user = await User.findOne({
       email: decoded.email,
-      uid: decoded.uid,
-      role: decoded.role,
+      "tokens.accessToken": token,
+    });
+
+    if (!user) {
+      return res.status(401).send({ message: "Unauthorized access" });
+    }
+
+    req.user = {
+      email: user.email,
+      uid: user.uid,
+      role: user.role,
     };
 
     next();

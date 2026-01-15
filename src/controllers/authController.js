@@ -68,6 +68,7 @@ const registerUser = async (req, res) => {
     });
   } catch (error) {
     console.error("Registration error:", error);
+
     res.status(500).send({
       success: false,
       message: "Error registering user",
@@ -89,7 +90,7 @@ const loginUser = async (req, res) => {
     }
 
     // Finding user by email
-    const user = await User.findOne({ email });
+    const user = (await User.findOne({ email })).toObject();
 
     if (!user) {
       return res.status(404).send({
@@ -115,20 +116,21 @@ const loginUser = async (req, res) => {
     );
 
     // Updating user tokens and last login
-    user["tokens.accessToken"] = accessToken;
-    user["tokens.refreshToken"] = refreshToken;
-    user.lastLoggedIn = new Date().toISOString();
+    await User.findByIdAndUpdate(user._id, {
+      $set: {
+        "tokens.accessToken": accessToken,
+        "tokens.refreshToken": refreshToken,
+        lastLoggedIn: new Date().toISOString(),
+      },
+    });
 
-    await user.save();
-
-    const userResponse = user.toObject();
-    delete userResponse.password;
-    delete userResponse.tokens;
+    delete user.password;
+    delete user.tokens;
 
     res.send({
       success: true,
       message: "Login successful",
-      user: userResponse,
+      user,
       tokens: {
         accessToken,
         refreshToken,
@@ -136,6 +138,7 @@ const loginUser = async (req, res) => {
     });
   } catch (error) {
     console.error("Login error:", error);
+
     res.status(500).send({
       success: false,
       message: "Error logging in",
