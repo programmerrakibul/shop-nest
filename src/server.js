@@ -30,7 +30,7 @@ const startServer = async () => {
 
     // 404 handler
     app.use((req, res) => {
-      res.status(404).send({ message: "Route not found" });
+      res.status(404).send({ message: "API route not found" });
     });
 
     // Start server

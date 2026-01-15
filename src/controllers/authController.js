@@ -1,7 +1,7 @@
+const uuid = require("uuid");
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 const { generateTokens } = require("../utils/generateTokens");
-const uuid = require("uuid");
 
 const registerUser = async (req, res) => {
   try {
@@ -144,4 +144,29 @@ const loginUser = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser };
+const logoutUser = async (req, res) => {
+  try {
+    const { email } = req.user;
+
+    await User.findOneAndUpdate(
+      { email },
+      {
+        $set: {
+          "tokens.accessToken": null,
+          "tokens.refreshToken": null,
+        },
+      }
+    );
+
+    res.send({ success: true, message: "Logged out successfully" });
+  } catch (error) {
+    console.error("Error logging out:", error);
+    res.status(500).send({
+      success: false,
+      message: "Error logging out",
+      error: error.message,
+    });
+  }
+};
+
+module.exports = { registerUser, loginUser, logoutUser };

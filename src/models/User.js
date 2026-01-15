@@ -41,10 +41,10 @@ const userSchema = new mongoose.Schema(
     },
     tokens: {
       accessToken: {
-        type: String,
+        type: String || null,
       },
       refreshToken: {
-        type: String,
+        type: String || null,
       },
     },
     lastLoggedIn: {
