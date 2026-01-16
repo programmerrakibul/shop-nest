@@ -4,10 +4,12 @@ const {
   getAllProducts,
   getProductById,
 } = require("../controllers/productController");
+const { verifyToken } = require("../middlewares/verifyToken");
+const { authorize } = require("../middlewares/authorize");
 
 const productRouter = express.Router();
 
-productRouter.post("/", createProduct);
+productRouter.post("/", verifyToken, authorize("admin"), createProduct);
 
 productRouter.get("/", getAllProducts);
 
