@@ -13,8 +13,8 @@ const clientOptions = {
 const connectDB = async () => {
   try {
     await mongoose.connect(uri, clientOptions);
-    await mongoose.connection.db.admin().command({ ping: 1 });
-    console.log("You successfully connected to MongoDB!");
+    // await mongoose.connection.db.admin().command({ ping: 1 });
+    // console.log("You successfully connected to MongoDB!");
   } catch (error) {
     throw error;
   } finally {

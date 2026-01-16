@@ -1,8 +1,8 @@
-const uuid = require("uuid");
 const stripe = require("../config/stripe");
 const Order = require("../models/Order");
 const Product = require("../models/Product");
 const { appError } = require("../utils/appError");
+const { generateOrderID } = require("../utils/generateOrderID");
 
 const createOrder = async (req, res, next) => {
   try {
@@ -28,7 +28,7 @@ const createOrder = async (req, res, next) => {
     const productName = existingProduct.name;
     const productPrice = existingProduct.price;
     const quantityNum = Number(quantity) || 1;
-    const orderID = `ORD-${uuid.v4().split("-").join("").substring(0, 12)}`;
+    const orderID = generateOrderID();
 
     if (quantityNum > existingProduct.quantity) {
       throw appError("Requested quantity exceeds available stock", 400);

@@ -1,13 +1,13 @@
-const uuid = require("uuid");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const { generateTokens } = require("../utils/generateTokens");
 const { appError } = require("../utils/appError");
+const { generateUID } = require("../utils/generateUID");
 
 const registerUser = async (req, res, next) => {
   try {
-    const uid = uuid.v4();
+    const uid = generateUID();
     const { name, email, password, image, role = "customer" } = req.body || {};
 
     // Validating required fields
