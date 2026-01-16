@@ -16,8 +16,10 @@ const createOrder = async (req, res) => {
     }
 
     let existingProduct;
+
     try {
       existingProduct = await Product.findById(productID);
+
       if (!existingProduct) {
         return res.status(404).send({
           success: false,
@@ -37,7 +39,7 @@ const createOrder = async (req, res) => {
     const orderID = `ORD-${uuid.v4().split("-").join("").substring(0, 12)}`;
 
     if (quantityNum > existingProduct.quantity) {
-      return res.status(400).json({
+      return res.status(400).send({
         success: false,
         message: "Requested quantity exceeds available stock",
       });

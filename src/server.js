@@ -6,17 +6,24 @@ const connectDB = require("./config/connectDB.js");
 const authRouter = require("./routes/authRouter.js");
 const productRouter = require("./routes/productRouter.js");
 const orderRouter = require("./routes/orderRouter.js");
+const { stripeWebhook } = require("./controllers/webhookController.js");
 
 const app = express();
 const port = process.env.PORT || 8000;
 
-// Middlewares
-app.use(cors());
-app.use(express.json());
-
 const startServer = async () => {
   try {
     await connectDB();
+
+    app.use(cors());
+
+    app.post(
+      "/api/orders/webhook",
+      express.raw({ type: "application/json" }),
+      stripeWebhook
+    );
+
+    app.use(express.json());
 
     app.get("/", (req, res) => {
       res.send({ message: "Welcome to ShopNest Backend API" });
