@@ -2,7 +2,7 @@ require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
-const mongoose = require("mongoose");
+const connectDB = require("./config/connectDB.js");
 const authRouter = require("./routes/authRouter.js");
 const productRouter = require("./routes/productRouter.js");
 const orderRouter = require("./routes/orderRouter.js");
@@ -14,15 +14,9 @@ const port = process.env.PORT || 8000;
 app.use(cors());
 app.use(express.json());
 
-const clientOptions = {
-  serverApi: { version: "1", strict: true, deprecationErrors: true },
-};
-
 const startServer = async () => {
   try {
-    await mongoose.connect(process.env.MONGODB_URI, clientOptions);
-    await mongoose.connection.db.admin().command({ ping: 1 });
-    console.log("You successfully connected to MongoDB!");
+    await connectDB();
 
     app.get("/", (req, res) => {
       res.send({ message: "Welcome to ShopNest Backend API" });
@@ -41,10 +35,9 @@ const startServer = async () => {
     app.listen(port, () => {
       console.log(`Server is running on port ${port}`);
     });
-  } finally {
-    //  await mongoose.disconnect();
+  } catch (error) {
+    console.dir(error);
   }
 };
 
-// Start the application
-startServer().catch(console.dir);
+startServer();

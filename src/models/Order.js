@@ -7,13 +7,11 @@ const orderSchema = new mongoose.Schema(
         type: String,
         required: [true, "User ID is required"],
         trim: true,
-        unique: true,
       },
       email: {
         type: String,
         required: [true, "User email is required"],
         trim: true,
-        unique: true,
       },
     },
     orderID: {
@@ -33,7 +31,6 @@ const orderSchema = new mongoose.Schema(
         ref: "Product",
         required: [true, "Product ID is required"],
         trim: true,
-        unique: true,
       },
       price: {
         type: Number,
