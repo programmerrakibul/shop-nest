@@ -5,6 +5,7 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 const authRouter = require("./routes/authRouter.js");
 const productRouter = require("./routes/productRouter.js");
+const orderRouter = require("./routes/orderRouter.js");
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -29,6 +30,7 @@ const startServer = async () => {
 
     app.use("/api/auth", authRouter);
     app.use("/api/products", productRouter);
+    app.use("/api/orders", orderRouter);
 
     // 404 handler
     app.use((req, res) => {
