@@ -103,6 +103,34 @@ const createOrder = async (req, res) => {
   }
 };
 
+const getUserOrders = async (req, res) => {
+  try {
+    const { uid, email } = req.user;
+
+    const orders = await Order.find({
+      "userInfo.uid": uid,
+      "userInfo.email": email,
+    })
+      .sort({ createdAt: -1 })
+      .lean();
+
+    res.send({
+      success: true,
+      message: "User orders retrieved successfully",
+      orders,
+    });
+  } catch (error) {
+    console.error("Error fetching user orders:", error);
+
+    res.status(500).send({
+      success: false,
+      message: `Error retrieving orders: ${error.message}`,
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   createOrder,
+  getUserOrders,
 };
