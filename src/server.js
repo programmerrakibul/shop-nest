@@ -7,6 +7,7 @@ const authRouter = require("./routes/authRouter.js");
 const productRouter = require("./routes/productRouter.js");
 const orderRouter = require("./routes/orderRouter.js");
 const { stripeWebhook } = require("./controllers/webhookController.js");
+const { globalErrorHandler } = require("./middlewares/globalErrorHandler.js");
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -37,6 +38,9 @@ const startServer = async () => {
     app.use((req, res) => {
       res.status(404).send({ message: "API route not found" });
     });
+
+    // Global error handler
+    app.use(globalErrorHandler);
 
     // Start server
     app.listen(port, () => {

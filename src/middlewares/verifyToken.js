@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const { appError } = require("../utils/appError");
 
 const verifyToken = async (req, res, next) => {
   try {
@@ -31,8 +32,8 @@ const verifyToken = async (req, res, next) => {
     };
 
     next();
-  } catch (error) {
-    return res.status(401).send({ message: "Unauthorized access" });
+  } catch {
+    throw appError("Unauthorized access", 401);
   }
 };
 

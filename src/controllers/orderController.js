@@ -2,17 +2,15 @@ const uuid = require("uuid");
 const stripe = require("../config/stripe");
 const Order = require("../models/Order");
 const Product = require("../models/Product");
+const { appError } = require("../utils/appError");
 
-const createOrder = async (req, res) => {
+const createOrder = async (req, res, next) => {
   try {
     const { uid, email } = req.user;
     const { productID, quantity } = req.body;
 
     if (!productID || productID.trim().length !== 24) {
-      return res.status(400).send({
-        success: false,
-        message: "Product information is required",
-      });
+      throw appError("Missing required fields: productID", 400);
     }
 
     let existingProduct;
@@ -21,16 +19,10 @@ const createOrder = async (req, res) => {
       existingProduct = await Product.findById(productID);
 
       if (!existingProduct) {
-        return res.status(404).send({
-          success: false,
-          message: "Product not found",
-        });
+        throw appError("Product not found", 404);
       }
     } catch (error) {
-      return res.status(400).send({
-        success: false,
-        message: "Invalid product ID",
-      });
+      return next(error);
     }
 
     const productName = existingProduct.name;
@@ -39,10 +31,7 @@ const createOrder = async (req, res) => {
     const orderID = `ORD-${uuid.v4().split("-").join("").substring(0, 12)}`;
 
     if (quantityNum > existingProduct.quantity) {
-      return res.status(400).send({
-        success: false,
-        message: "Requested quantity exceeds available stock",
-      });
+      throw appError("Requested quantity exceeds available stock", 400);
     }
 
     const session = await stripe.checkout.sessions.create({
@@ -95,17 +84,11 @@ const createOrder = async (req, res) => {
       stripeCheckoutUrl: session.url,
     });
   } catch (error) {
-    console.error("Error creating order:", error);
-
-    res.status(500).send({
-      success: false,
-      message: "Server error while creating order",
-      error: error.message,
-    });
+    next(error);
   }
 };
 
-const getUserOrders = async (req, res) => {
+const getUserOrders = async (req, res, next) => {
   try {
     const { uid, email } = req.user;
 
@@ -122,17 +105,11 @@ const getUserOrders = async (req, res) => {
       orders,
     });
   } catch (error) {
-    console.error("Error fetching user orders:", error);
-
-    res.status(500).send({
-      success: false,
-      message: `Error retrieving orders: ${error.message}`,
-      error: error.message,
-    });
+    next(error);
   }
 };
 
-const getAllOrders = async (req, res) => {
+const getAllOrders = async (req, res, next) => {
   try {
     const { limit, skip } = req.query;
 
@@ -152,13 +129,7 @@ const getAllOrders = async (req, res) => {
       total: orders.length || 0,
     });
   } catch (error) {
-    console.error("Error retrieving orders:", error);
-
-    res.status(500).send({
-      success: false,
-      message: `Error retrieving orders: ${error.message}`,
-      error: error.message,
-    });
+    next(error);
   }
 };
 

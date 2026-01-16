@@ -1,6 +1,7 @@
 const stripe = require("../config/stripe");
 const Order = require("../models/Order");
 const Product = require("../models/Product");
+const { appError } = require("../utils/appError");
 
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
 
@@ -10,7 +11,7 @@ if (!webhookSecret || !webhookSecret.trim()) {
   );
 }
 
-const stripeWebhook = async (req, res) => {
+const stripeWebhook = async (req, res, next) => {
   const sig = req.headers["stripe-signature"];
   const endpointSecret = webhookSecret;
 
@@ -34,20 +35,11 @@ const stripeWebhook = async (req, res) => {
       case "checkout.session.async_payment_succeeded":
         await handlePaymentSucceeded(session);
         break;
-
-      default:
-        console.log(`Unhandled event type: ${event.type}`);
     }
 
     res.send({ received: true });
   } catch (error) {
-    console.error("Error processing webhook:", error);
-
-    res.status(500).send({
-      success: false,
-      error: "Webhook handler failed",
-      message: error.message,
-    });
+    next(error);
   }
 };
 
@@ -58,7 +50,7 @@ const handlePaymentSucceeded = async (session) => {
     const order = await Order.findOne({ orderID });
 
     if (!order) {
-      throw new Error(`Order ${orderID} not found`);
+      throw appError(`Order ${orderID} not found`, 404);
     }
 
     order.paymentStatus = "paid";
@@ -69,11 +61,11 @@ const handlePaymentSucceeded = async (session) => {
     const product = await Product.findById(productID);
 
     if (!product) {
-      throw new Error(`Product ${productID} not found`);
+      throw appError(`Product ${productID} not found`, 404);
     }
 
     if (product.quantity < order.product.quantity) {
-      throw new Error(`Insufficient stock for product ${productID}`);
+      throw appError(`Insufficient stock for product ${productID}`, 400);
     }
 
     product.quantity -= order.product.quantity;

@@ -1,6 +1,7 @@
 const Product = require("../models/Product");
+const { appError } = require("../utils/appError");
 
-const createProduct = async (req, res) => {
+const createProduct = async (req, res, next) => {
   try {
     const product = new Product(req.body);
     await product.save();
@@ -11,17 +12,11 @@ const createProduct = async (req, res) => {
       product,
     });
   } catch (error) {
-    console.error("Error creating product:", error);
-
-    res.status(500).send({
-      success: false,
-      message: "Error creating product",
-      error: error.message,
-    });
+    next(error);
   }
 };
 
-const getAllProducts = async (req, res) => {
+const getAllProducts = async (req, res, next) => {
   try {
     const {
       limit = 10,
@@ -71,34 +66,22 @@ const getAllProducts = async (req, res) => {
       total: products.length || 0,
     });
   } catch (error) {
-    console.error("Error retrieving products:", error);
-
-    res.status(500).send({
-      success: false,
-      message: "Error retrieving products",
-      error: error.message,
-    });
+    next(error);
   }
 };
 
-const getProductById = async (req, res) => {
+const getProductById = async (req, res, next) => {
   try {
     const { id } = req.params;
 
     if (!id || id.trim().length !== 24) {
-      return res.status(400).send({
-        success: false,
-        message: "Invalid product ID",
-      });
+      throw appError("Invalid product ID", 400);
     }
 
     const product = await Product.findById(id);
 
     if (!product) {
-      return res.status(404).send({
-        success: false,
-        message: "Product not found",
-      });
+      throw appError("Product not found", 404);
     }
     res.send({
       success: true,
@@ -106,13 +89,7 @@ const getProductById = async (req, res) => {
       product,
     });
   } catch (error) {
-    console.error("Error retrieving product:", error);
-
-    res.status(500).send({
-      success: false,
-      message: "Error retrieving product",
-      error: error.message,
-    });
+    next(error);
   }
 };
 

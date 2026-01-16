@@ -2,35 +2,35 @@ const uuid = require("uuid");
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 const { generateTokens } = require("../utils/generateTokens");
+const { appError } = require("../utils/appError");
 
-const registerUser = async (req, res) => {
+const registerUser = async (req, res, next) => {
   try {
     const uid = uuid.v4();
     const { name, email, password, image, role = "customer" } = req.body || {};
 
     // Validating required fields
-    if (!name || !email || !password) {
-      return res.status(400).send({
-        success: false,
-        message: "Missing required fields: name, email, password",
-      });
+    if (
+      !name ||
+      !name.trim() ||
+      !email ||
+      !email.trim() ||
+      !password ||
+      !password.trim()
+    ) {
+      throw appError("Missing required fields: name, email, password", 400);
     }
 
     // Validating password length
     if (password.length < 6) {
-      return res.status(400).send({
-        success: false,
-        message: "Password must be at least 6 characters long",
-      });
+      throw appError("Password must be at least 6 characters long", 400);
     }
 
     // Checking if user already exists
     const existingUser = await User.findOne({ $or: [{ email }, { uid }] });
 
     if (existingUser) {
-      return res.status(400).send({
-        message: "User already exists with this email or UID",
-      });
+      throw appError("User already exists with this email or UID", 400);
     }
 
     // Hashing password
@@ -67,45 +67,31 @@ const registerUser = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Registration error:", error);
-
-    res.status(500).send({
-      success: false,
-      message: "Error registering user",
-      error: error.message,
-    });
+    next(error);
   }
 };
 
-const loginUser = async (req, res) => {
+const loginUser = async (req, res, next) => {
   try {
     const { email, password } = req.body || {};
 
     // Validating required fields
-    if (!email || !password) {
-      return res.status(400).send({
-        success: false,
-        message: "Missing required fields: email, password",
-      });
+    if (!email || !email.trim() || !password || !password.trim()) {
+      throw appError("Missing required fields: email, password", 400);
     }
 
     // Finding user by email
     const user = (await User.findOne({ email })).toObject();
 
     if (!user) {
-      return res.status(404).send({
-        success: false,
-        message: "User not found",
-      });
+      throw appError("User not found", 404);
     }
 
     // Checking password
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
     if (!isPasswordValid) {
-      return res
-        .status(401)
-        .send({ success: false, message: "Invalid credentials" });
+      throw appError("Invalid credentials", 401);
     }
 
     // Generating new tokens
@@ -137,17 +123,11 @@ const loginUser = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("Login error:", error);
-
-    res.status(500).send({
-      success: false,
-      message: "Error logging in",
-      error: error.message,
-    });
+    next(error);
   }
 };
 
-const logoutUser = async (req, res) => {
+const logoutUser = async (req, res, next) => {
   try {
     const { email } = req.user;
 
@@ -163,12 +143,7 @@ const logoutUser = async (req, res) => {
 
     res.send({ success: true, message: "Logged out successfully" });
   } catch (error) {
-    console.error("Error logging out:", error);
-    res.status(500).send({
-      success: false,
-      message: "Error logging out",
-      error: error.message,
-    });
+    next(error);
   }
 };
 
