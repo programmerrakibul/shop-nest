@@ -132,7 +132,38 @@ const getUserOrders = async (req, res) => {
   }
 };
 
+const getAllOrders = async (req, res) => {
+  try {
+    const { limit, skip } = req.query;
+
+    const limitNum = parseInt(limit) || 0;
+    const skipNum = parseInt(skip) || 0;
+
+    const orders = await Order.find()
+      .skip(skipNum)
+      .limit(limitNum)
+      .sort({ createdAt: -1 })
+      .lean();
+
+    res.send({
+      success: true,
+      message: "All orders retrieved successfully",
+      orders,
+      total: orders.length || 0,
+    });
+  } catch (error) {
+    console.error("Error retrieving orders:", error);
+
+    res.status(500).send({
+      success: false,
+      message: `Error retrieving orders: ${error.message}`,
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   createOrder,
   getUserOrders,
+  getAllOrders,
 };
