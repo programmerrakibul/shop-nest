@@ -3,6 +3,7 @@ const {
   registerUser,
   loginUser,
   logoutUser,
+  refreshTokens,
 } = require("../controllers/authController");
 const { verifyToken } = require("../middlewares/verifyToken");
 
@@ -19,5 +20,8 @@ authRouter.post("/login", loginUser);
 
 // Logout user
 authRouter.post("/logout", verifyToken, logoutUser);
+
+// Refresh tokens
+authRouter.post("/refresh", refreshTokens);
 
 module.exports = authRouter;

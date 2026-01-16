@@ -1,5 +1,6 @@
 const uuid = require("uuid");
 const bcrypt = require("bcryptjs");
+const jwt = require("jsonwebtoken");
 const User = require("../models/User");
 const { generateTokens } = require("../utils/generateTokens");
 const { appError } = require("../utils/appError");
@@ -147,4 +148,56 @@ const logoutUser = async (req, res, next) => {
   }
 };
 
-module.exports = { registerUser, loginUser, logoutUser };
+const refreshTokens = async (req, res, next) => {
+  try {
+    const { refreshToken } = req.body;
+
+    if (!refreshToken || !refreshToken.trim()) {
+      throw appError("Refresh token is required", 400);
+    }
+
+    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+
+    const user = await User.findOne({
+      email: decoded.email,
+      uid: decoded.uid,
+      "tokens.refreshToken": refreshToken,
+    });
+
+    if (!user) {
+      throw appError("Invalid refresh token", 401);
+    }
+
+    const { accessToken, refreshToken: newRefreshToken } = generateTokens(
+      user.email,
+      user.uid,
+      user.role
+    );
+
+    await User.findByIdAndUpdate(user._id, {
+      $set: {
+        "tokens.accessToken": accessToken,
+        "tokens.refreshToken": newRefreshToken,
+      },
+    });
+
+    res.send({
+      success: true,
+      message: "Tokens refreshed successfully",
+      tokens: {
+        accessToken,
+        refreshToken: newRefreshToken,
+      },
+    });
+  } catch (error) {
+    if (
+      error.name === "JsonWebTokenError" ||
+      error.name === "TokenExpiredError"
+    ) {
+      return next(appError("Invalid or expired refresh token", 401));
+    }
+    next(error);
+  }
+};
+
+module.exports = { registerUser, loginUser, logoutUser, refreshTokens };

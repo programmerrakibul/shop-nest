@@ -1,39 +1,41 @@
 const jwt = require("jsonwebtoken");
-const User = require("../models/User");
 const { appError } = require("../utils/appError");
 
-const verifyToken = async (req, res, next) => {
+const jwtSecret = process.env.JWT_SECRET;
+
+if (!jwtSecret || !jwtSecret.trim()) {
+  throw new Error("JWT_SECRET is not defined in environment variables");
+}
+
+const verifyToken = (req, res, next) => {
   try {
-    const token = req.headers.authorization?.split(" ")[1];
+    const authHeader = req.headers.authorization;
 
-    if (!token) {
-      return res.status(401).send({ message: "Unauthorized access" });
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      throw appError("Access token is required", 401);
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const token = authHeader.split(" ")[1];
 
-    if (!decoded) {
-      return res.status(401).send({ message: "Unauthorized access" });
-    }
+    const decoded = jwt.verify(token, jwtSecret);
 
-    const user = await User.findOne({
-      email: decoded.email,
-      "tokens.accessToken": token,
-    });
-
-    if (!user) {
-      return res.status(401).send({ message: "Unauthorized access" });
-    }
-
-    req.user = {
-      email: user.email,
-      uid: user.uid,
-      role: user.role,
-    };
+    req.user = decoded;
 
     next();
-  } catch {
-    throw appError("Unauthorized access", 401);
+  } catch (error) {
+    if (error.name === "TokenExpiredError") {
+      return res.status(401).send({
+        success: false,
+        message: "Access token expired",
+        code: "TOKEN_EXPIRED",
+      });
+    }
+
+    if (error.name === "JsonWebTokenError") {
+      return next(appError("Invalid access token", 401));
+    }
+
+    next(error);
   }
 };
 
