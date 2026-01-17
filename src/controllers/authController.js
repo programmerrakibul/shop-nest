@@ -99,7 +99,7 @@ const loginUser = async (req, res, next) => {
     const { accessToken, refreshToken } = generateTokens(
       user.email,
       user.uid,
-      user.role
+      user.role,
     );
 
     // Updating user tokens and last login
@@ -139,7 +139,7 @@ const logoutUser = async (req, res, next) => {
           "tokens.accessToken": null,
           "tokens.refreshToken": null,
         },
-      }
+      },
     );
 
     res.send({ success: true, message: "Logged out successfully" });
@@ -171,7 +171,7 @@ const refreshTokens = async (req, res, next) => {
     const { accessToken, refreshToken: newRefreshToken } = generateTokens(
       user.email,
       user.uid,
-      user.role
+      user.role,
     );
 
     await User.findByIdAndUpdate(user._id, {
@@ -200,4 +200,33 @@ const refreshTokens = async (req, res, next) => {
   }
 };
 
-module.exports = { registerUser, loginUser, logoutUser, refreshTokens };
+const getUserProfile = async (req, res, next) => {
+  try {
+    const { email, uid } = req.user;
+
+    const user = await User.findOne({ email, uid }).lean();
+
+    if (!user) {
+      throw appError("User not found", 404);
+    }
+
+    delete user.password;
+    delete user.tokens;
+
+    res.send({
+      success: true,
+      message: "User profile retrieved successfully",
+      user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports = {
+  registerUser,
+  loginUser,
+  logoutUser,
+  refreshTokens,
+  getUserProfile,
+};
