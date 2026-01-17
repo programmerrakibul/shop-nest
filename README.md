@@ -89,6 +89,7 @@ The server will start on `http://localhost:8000`
 2. **Login**: `POST /api/auth/login` - Returns access & refresh tokens
 3. **Token Refresh**: `POST /api/auth/refresh` - Get new access token
 4. **Logout**: `POST /api/auth/logout` - Invalidate tokens
+5. **Profile**: `GET /api/auth/profile` - Returns user profile info
 
 ### Token Usage
 
@@ -153,6 +154,7 @@ POST   /api/auth/register     # Register new user
 POST   /api/auth/login        # User login
 POST   /api/auth/logout       # User logout (requires auth)
 POST   /api/auth/refresh      # Refresh access token
+GET   /api/auth/profile      # User information (requires auth)
 ```
 
 ### Product Endpoints
