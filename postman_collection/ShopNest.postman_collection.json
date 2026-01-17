@@ -1,0 +1,390 @@
+{
+  "info": {
+    "_postman_id": "de289a2a-713e-40cf-b4a1-e1d4f86b29ef",
+    "name": "ShopNest",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "49580418"
+  },
+  "item": [
+    {
+      "name": "auth",
+      "item": [
+        {
+          "name": "register",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Roronoa Zoro\",\r\n    \"email\": \"zoro@gmail.com\",\r\n    \"password\": \"Zoro123#\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/api/auth/register",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "login",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"luffy@gmail.com\",\r\n    \"password\": \"Luffy123#\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/api/auth/login",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "logout",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"luffy@gmail.com\",\r\n    \"password\": \"Luffy123#\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/api/auth/logout",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "logout"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "refresh token",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"refreshToken\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InJha2lidWxAeWFob28uY29tIiwidWlkIjoiZThkYWM2ODctNzBiNS00NDQyLWE2ZTYtMWYwYjAzNDIyMDJjIiwicm9sZSI6ImFkbWluIiwiaWF0IjoxNzY4NTg4MjkyLCJleHAiOjE3NjkxOTMwOTJ9.C66w6SZZJmI-3_GlbkFq19ntgR5-BreubPulN3VZAY8\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/api/auth/refresh",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "refresh"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get user profile",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/auth/profile",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "profile"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "auth": {
+        "type": "bearer",
+        "bearer": [
+          {
+            "key": "token",
+            "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InJha2lidWxAeWFob28uY29tIiwidWlkIjoiZjM4N2IxZjEtOWQ4ZC00Mzk3LWFlZmYtNTAwNzcxYjU2NTk3Iiwicm9sZSI6ImN1c3RvbWVyIiwiaWF0IjoxNzY4NjI0MjkyLCJleHAiOjE3Njg2MjUxOTJ9.mmTa_SV5bxUrTvdDj80EM7CEyJxn4B0Ifs1sG7RvPDA",
+            "type": "string"
+          }
+        ]
+      },
+      "event": [
+        {
+          "listen": "prerequest",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        },
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "packages": {},
+            "requests": {},
+            "exec": [
+              ""
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "name": "products",
+      "item": [
+        {
+          "name": "create product",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Wireless Bluetooth Headphones\",\r\n    \"description\": \"Premium noise-cancelling headphones with 30-hour battery life, comfortable over-ear design, and crystal-clear audio quality. Perfect for travel, work, or leisure listening.\",\r\n    \"price\": 129.99,\r\n    \"category\": \"electronics\",\r\n    \"subcategory\": \"audio\",\r\n    \"quantity\": 50,\r\n    \"imageUrl\": \"https://example.com/images/headphones.jpg\"\r\n  }",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/api/products",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get all products",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"name\": \"Yamaha FZ21\",\r\n    \"description\": \"hfghfdgjhgdf\",\r\n    \"category\": \"bike\",\r\n    \"price\": 124500\r\n}"
+            },
+            "url": {
+              "raw": "{{baseURL}}/api/products",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "products"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get product by id",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/api/products/696b15892639e37c619ac892",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "products",
+                "696b15892639e37c619ac892"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "orders",
+      "item": [
+        {
+          "name": "create order",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"productID\": \"696b15612639e37c619ac890\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/api/orders",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get user orders",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"productID\": \"696927b08c98189bf1c850f4\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/api/orders/customer",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "orders",
+                "customer"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get all orders",
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"productID\": \"696927b08c98189bf1c850f4\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/api/orders",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "api",
+                "orders"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Imx1ZmZ5QGdtYWlsLmNvbSIsInVpZCI6IjUyN2U5MDZlLTJiMTQtNDBmYy05MDgyLTcxZTg5ZTU4NWZlMyIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc2ODYyNTQxMiwiZXhwIjoxNzY4NjI2MzEyfQ.55Jg9JcLo_aEKHmM5Cee7S68SNCKXwSI-D1JzIwvf-w",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseURL",
+      "value": "http://localhost:8000/api",
+      "disabled": true
+    }
+  ]
+}
